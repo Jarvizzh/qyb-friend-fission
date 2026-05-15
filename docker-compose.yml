@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: fission-backend
+    volumes:
+      - ./backend/sql_app.db:/app/sql_app.db
+      - ./backend/tasks/logs:/app/tasks/logs
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+
+  frontend:
+    build: ./frontend
+    container_name: fission-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai

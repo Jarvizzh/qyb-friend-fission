@@ -1,0 +1,72 @@
+:root {
+  --bg-deep: #020617;
+  --bg-card: rgba(15, 23, 42, 0.7);
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --accent-cyan: #22d3ee;
+  --accent-purple: #818cf8;
+  --accent-pink: #f472b6;
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --shadow-neon: 0 0 15px rgba(34, 211, 238, 0.3);
+  
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: var(--text-main);
+  background-color: var(--bg-deep);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #1e1b4b, #020617);
+}
+
+#root {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent-cyan);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--accent-purple);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: var(--accent-cyan);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
