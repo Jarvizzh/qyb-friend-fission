@@ -32,13 +32,13 @@ class TaskManager:
     def __init__(self):
         self.active_tasks: Dict[str, Dict] = {} # task_id -> {process, stop_event, log_queue}
 
-    def start_task(self, task_id: str, tasks_list: List[dict], session_id: str, uid: str):
+    def start_task(self, task_id: str, tasks_list: List[dict], session_id: str, uid: str, concurrency: int = 4):
         log_queue = multiprocessing.Queue()
         stop_event = multiprocessing.Event()
         
         process = multiprocessing.Process(
             target=run_fission_task,
-            args=(task_id, tasks_list, session_id, uid, log_queue, stop_event)
+            args=(task_id, tasks_list, session_id, uid, log_queue, stop_event, concurrency)
         )
         process.start()
         
@@ -181,14 +181,15 @@ async def start_task(req: schemas.TaskCreate, mobile: str, db: Session = Depends
         raise HTTPException(status_code=404, detail="未找到该账号的授权信息")
     
     task_id = str(uuid.uuid4())
-    task_manager.start_task(task_id, [t.dict() for t in req.tasks], user.session_id, user.uid)
+    task_manager.start_task(task_id, [t.dict() for t in req.tasks], user.session_id, user.uid, req.concurrency)
     
     # 存入数据库
     new_task = models.TaskRecord(
         id=task_id,
         filename="Manual Batch", # 实际可动态传入
         status="running",
-        log_path=f"tasks/logs/{task_id}.log"
+        log_path=f"tasks/logs/{task_id}.log",
+        concurrency=req.concurrency
     )
     db.add(new_task)
     db.commit()

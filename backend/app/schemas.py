@@ -24,6 +24,7 @@ class TaskPreview(BaseModel):
 
 class TaskCreate(BaseModel):
     tasks: List[TaskPreview]
+    concurrency: int = 4
 
 class SecretVerifyRequest(BaseModel):
     secret_key: str
@@ -33,6 +34,7 @@ class TaskResponse(BaseModel):
     filename: str
     status: str
     created_at: datetime
+    concurrency: int
     stats: Optional[dict] = None
 
     class Config:

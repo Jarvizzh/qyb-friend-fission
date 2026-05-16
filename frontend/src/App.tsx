@@ -29,6 +29,7 @@ function App() {
   const [selectedMobile, setSelectedMobile] = useState('');
   
   const [previewTasks, setPreviewTasks] = useState<TaskPreview[]>([]);
+  const [concurrency, setConcurrency] = useState<number>(4);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
   const [isTaskRunning, setIsTaskRunning] = useState(false);
@@ -229,7 +230,8 @@ function App() {
 
     try {
       const res = await axios.post(`${API_BASE}/api/tasks/start?mobile=${selectedMobile}`, {
-        tasks: previewTasks
+        tasks: previewTasks,
+        concurrency: concurrency
       });
       const taskId = res.data.task_id;
       setCurrentTaskId(taskId);
@@ -408,6 +410,17 @@ function App() {
                   <Upload size={18} /> 上传 Excel
                   <input type="file" hidden onChange={handleFileUpload} accept=".xlsx,.xls" />
                 </label>
+                <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '1rem'}}>
+                  <span style={{fontSize: '0.9rem', color: 'var(--text-dim)', whiteSpace: 'nowrap'}}>并发数:</span>
+                  <select 
+                    value={concurrency} 
+                    onChange={e => setConcurrency(parseInt(e.target.value))}
+                    style={{width: '80px', padding: '0.4rem'}}
+                    disabled={isTaskRunning}
+                  >
+                    {[4, 6, 8, 10].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </div>
               </div>
               <div style={{display: 'flex', gap: '1rem'}}>
                 {!isTaskRunning ? (
@@ -503,7 +516,12 @@ function App() {
                         {task.status === 'completed' ? '已完成' : task.status === 'running' ? '执行中' : '已停止'}
                       </span>
                     </td>
-                    <td style={{fontSize: '0.8rem'}}>{new Date(task.created_at).toLocaleString()}</td>
+                    <td style={{fontSize: '0.8rem'}}>
+                      {new Date(task.created_at + (task.created_at.includes('Z') ? '' : 'Z')).toLocaleString('zh-CN', { 
+                        timeZone: 'Asia/Shanghai',
+                        hour12: false 
+                      })}
+                    </td>
                     <td>
                       <div style={{display: 'flex', gap: '0.5rem'}}>
                         <button className="btn btn-outline" style={{padding: '0.4rem 0.8rem', fontSize: '0.8rem'}} onClick={() => viewHistoryLogs(task.id)}>

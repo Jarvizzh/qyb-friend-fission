@@ -20,6 +20,7 @@ class TaskRecord(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
     log_path = Column(String)
+    concurrency = Column(Integer, default=4)
     stats = Column(JSON, nullable=True) # {total: 0, sent: 0, failed: 0}
 
 class SystemConfig(Base):

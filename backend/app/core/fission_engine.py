@@ -198,14 +198,14 @@ def process_single_subtask(task, session_id, uid, accounts_map, log, stop_event)
     except Exception as e:
         log(f"{prefix}运行时出错: {str(e)}")
 
-def run_fission_task(task_id, tasks_list, session_id, uid, log_queue, stop_event):
+def run_fission_task(task_id, tasks_list, session_id, uid, log_queue, stop_event, concurrency=4):
     def log(msg):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         full_msg = f"[{timestamp}] {msg}"
         log_queue.put(full_msg)
 
     try:
-        log(f"🚀 任务 {task_id} 启动，采用 4 路并发处理...")
+        log(f"🚀 任务 {task_id} 启动，采用 {concurrency} 路并发处理...")
         log("------------------------------------------")
         log(f"📊 待处理子任务总数: {len(tasks_list)}")
         for idx, t in enumerate(tasks_list):
@@ -215,7 +215,7 @@ def run_fission_task(task_id, tasks_list, session_id, uid, log_queue, stop_event
         
         accounts_map = get_wechat_accounts(session_id)
         
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
             futures = [
                 executor.submit(process_single_subtask, task, session_id, uid, accounts_map, log, stop_event) 
                 for task in tasks_list
